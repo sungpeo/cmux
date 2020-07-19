@@ -182,7 +182,7 @@ module CMUX
         get_and_modify_config_dn(url, role, conf_key) unless
           CHK.yn?('Continue to change (y|n:stop)? '.cyan, true)
 
-        to_change = { name: 'dfs_data_dir_list', value: new_value }
+        to_change = { name: 'dfs_data_dir_list', value: new_value.strip }
         http_request(uri, :put, [to_change])
       end
 
