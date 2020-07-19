@@ -133,8 +133,6 @@ module CMUX
             FMT.puts_str(msg, true)
 
             if CHK.yn?('Continue (y|n:stop)? '.cyan, true)
-              #CM.restart_role(cm, cl, role, @max_wait)
-              #msg = "cm = #{cm}, cl = #{cl}, cl_disp = #{cl_disp}, s_type = #{s_type}, r_type = #{r_type}, cdh_ver = #{cdh_ver}, service = #{service}"
               url_for_nm = create_api_url(cm, cl, nm_role.split('-NODEMANAGER-').first)
               url_for_dn = create_api_url(cm, cl, service)
 
@@ -156,12 +154,16 @@ module CMUX
       end
 
       def start_role(url, role)
+        return unless CHK.yn?("Will you start #{role} (y|n:skip)? ".cyan, true)
+
         uri = URI("#{url}/roleCommands/start")
         http_request(uri, :post, [role])
         puts "[ASYNC] Start #{role}".yellow
       end
 
       def stop_role(url, role)
+        return unless CHK.yn?("Will you stop #{role} (y|n:skip)? ".cyan, true)
+
         uri = URI("#{url}/roleCommands/stop")
         http_request(uri, :post, [role])
         puts "[ASYNC] Stop #{role}".yellow
@@ -176,7 +178,7 @@ module CMUX
         puts "#{conf_key} = #{value}"
         msg = "Enter a value to change : "
         new_value = CMUX::Utils.qna(msg.cyan, true)
-        puts "\nEntered value = #{new_value}".cyan
+        puts "\nEntered value = " + "#{new_value}".cyan
         get_and_modify_config_dn(url, role, conf_key) unless
           CHK.yn?('Continue to change (y|n:stop)? '.cyan, true)
 
