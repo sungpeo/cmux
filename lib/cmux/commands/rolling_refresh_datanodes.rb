@@ -132,17 +132,17 @@ module CMUX
             msg = 'Refresh '.red + "[#{hostname}] #{role} (At first, stop #{nm_role})".yellow
             FMT.puts_str(msg, true)
 
-            if CHK.yn?('Continue (y|n:stop)? '.cyan, true)
-              url_for_nm = create_api_url(cm, cl, nm_role.split('-NODEMANAGER-').first)
-              url_for_dn = create_api_url(cm, cl, service)
+            #if CHK.yn?('Continue (y|n:stop)? '.cyan, true)
+            url_for_nm = create_api_url(cm, cl, nm_role.split('-NODEMANAGER-').first)
+            url_for_dn = create_api_url(cm, cl, service)
 
-              stop_role(url_for_nm, nm_role)
-              get_and_modify_config_dn(url_for_dn, role, 'dfs_data_dir_list')
-              refresh_dn(url_for_dn, role)
-              start_role(url_for_nm, nm_role)
-            else
-              Utils.exit_with_msg('STOPPED'.red, true)
-            end
+            stop_role(url_for_nm, nm_role)
+            get_and_modify_config_dn(url_for_dn, role, 'dfs_data_dir_list')
+            refresh_dn(url_for_dn, role)
+            start_role(url_for_nm, nm_role)
+            #else
+            #  Utils.exit_with_msg('STOPPED'.red, true)
+            #end
           end
         ensure
           finish_rolling_restart(cm, cl, r_type)
