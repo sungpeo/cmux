@@ -154,9 +154,15 @@ module CMUX
       end
 
       def recommission_role(url, role)
-        return unless CHK.yn?("Will you recommission #{role} (y|n:skip)? ".cyan, true)
+        return unless CHK.yn?("Will you recommission/start #{role} (y|n:skip)? ".cyan, true)
 
+        # recommission
         uri = URI("#{url}/commands/recommission")
+        http_request(uri, :post, [role])
+        puts "[ASYNC] Recommission #{role}".yellow
+
+        # start
+        uri = URI("#{url}/roleCommands/start")
         http_request(uri, :post, [role])
         puts "[ASYNC] Start #{role}".yellow
       end
