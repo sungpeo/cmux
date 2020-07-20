@@ -136,10 +136,10 @@ module CMUX
             url_for_nm = create_api_url(cm, cl, nm_role.split('-NODEMANAGER-').first)
             url_for_dn = create_api_url(cm, cl, service)
 
-            stop_role(url_for_nm, nm_role)
+            decommission_role(url_for_nm, nm_role)
             get_and_modify_config_dn(url_for_dn, role, 'dfs_data_dir_list')
             refresh_dn(url_for_dn, role)
-            start_role(url_for_nm, nm_role)
+            recommission_role(url_for_nm, nm_role)
             #else
             #  Utils.exit_with_msg('STOPPED'.red, true)
             #end
@@ -153,20 +153,20 @@ module CMUX
         "http://#{cm}:7180/api/v19/clusters/#{cl}/services/#{service}"
       end
 
-      def start_role(url, role)
-        return unless CHK.yn?("Will you start #{role} (y|n:skip)? ".cyan, true)
+      def recommission_role(url, role)
+        return unless CHK.yn?("Will you recommission #{role} (y|n:skip)? ".cyan, true)
 
-        uri = URI("#{url}/roleCommands/start")
+        uri = URI("#{url}/commands/recommission")
         http_request(uri, :post, [role])
         puts "[ASYNC] Start #{role}".yellow
       end
 
-      def stop_role(url, role)
-        return unless CHK.yn?("Will you stop #{role} (y|n:skip)? ".cyan, true)
+      def decommission_role(url, role)
+        return unless CHK.yn?("Will you decommission #{role} (y|n:skip)? ".cyan, true)
 
-        uri = URI("#{url}/roleCommands/stop")
+        uri = URI("#{url}/commands/decommission")
         http_request(uri, :post, [role])
-        puts "[ASYNC] Stop #{role}".yellow
+        puts "[ASYNC] Decommission #{role}".yellow
       end
 
       def get_and_modify_config_dn(url, role, conf_key)
