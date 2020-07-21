@@ -140,6 +140,7 @@ module CMUX
             get_and_modify_config_dn(url_for_dn, role, 'dfs_data_dir_list')
             refresh_dn(url_for_dn, role)
             recommission_role(url_for_nm, nm_role)
+            start_role(url_for_nm, nm_role)
             #else
             #  Utils.exit_with_msg('STOPPED'.red, true)
             #end
@@ -153,18 +154,22 @@ module CMUX
         "http://#{cm}:7180/api/v19/clusters/#{cl}/services/#{service}"
       end
 
-      def recommission_role(url, role)
-        return unless CHK.yn?("Will you recommission/start #{role} (y|n:skip)? ".cyan, true)
-
-        # recommission
-        uri = URI("#{url}/commands/recommission")
-        http_request(uri, :post, [role])
-        puts "[ASYNC] Recommission #{role}".yellow
+      def start_role(url, role)
+        return unless CHK.yn?("Will you start #{role} (y|n:skip)? ".cyan, true)
 
         # start
         uri = URI("#{url}/roleCommands/start")
         http_request(uri, :post, [role])
         puts "[ASYNC] Start #{role}".yellow
+      end
+
+      def recommission_role(url, role)
+        return unless CHK.yn?("Will you recommission #{role} (y|n:skip)? ".cyan, true)
+
+        # recommission
+        uri = URI("#{url}/commands/recommission")
+        http_request(uri, :post, [role])
+        puts "[ASYNC] Recommission #{role}".yellow
       end
 
       def decommission_role(url, role)
